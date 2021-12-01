@@ -1,17 +1,13 @@
+import api from "../services/api";
 import {
+  GraphQLObjectType,
   GraphQLString,
   GraphQLInt,
-  GraphQLObjectType,
   GraphQLSchema,
 } from "graphql";
 
-const users = [
-  { id: 21, name: "John", age: 25 },
-  { id: 15, name: "Sara", age: 24 },
-];
-
 const UserType = new GraphQLObjectType({
-  name: "User",
+  name: "UserType",
   fields: {
     id: { type: GraphQLString },
     firstName: { type: GraphQLString },
@@ -19,14 +15,16 @@ const UserType = new GraphQLObjectType({
   },
 });
 
+//este root query e quem fara a consulta no banco de dados
+//e retornara o resultado
 const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
   fields: {
-    user: {
+    users: {
       type: UserType,
       args: { id: { type: GraphQLString } },
       resolve(parentValue, args) {
-        return users.find((user) => user.id == args.id);
+        return api.get(`/users/${args.id}`).then((res) => res.data);
       },
     },
   },
