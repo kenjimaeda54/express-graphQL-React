@@ -1,5 +1,5 @@
 import express from "express";
-import graphQl from "express-graphql";
+import graphQLroutes from "./src/routes/graphQLroutes";
 
 class App {
   constructor() {
@@ -10,7 +10,9 @@ class App {
 
   middleware() {}
 
-  routes() {}
+  routes() {
+    this.app.use("/graphql", graphQLroutes);
+  }
 }
 
 export default new App().app;
