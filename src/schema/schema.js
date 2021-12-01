@@ -6,12 +6,34 @@ import {
   GraphQLSchema,
 } from "graphql";
 
+const CompanyType = new GraphQLObjectType({
+  name: "CompanyType",
+  fields: {
+    id: { type: GraphQLString },
+    name: { type: GraphQLString },
+    description: { type: GraphQLString },
+  },
+});
+
 const UserType = new GraphQLObjectType({
   name: "UserType",
   fields: {
     id: { type: GraphQLString },
     firstName: { type: GraphQLString },
     age: { type: GraphQLInt },
+    company: {
+      type: CompanyType,
+      //parentValue retorna o objeto que está sendo acessado
+      resolve(parentValue, args) {
+        return (
+          api
+            //parentValue vai retornar{   id: "1",   firstName: "John",   age: 30,companyId: "1" }
+            //esse companyId vai ser o id da empresa
+            .get(`/companies/${parentValue.companyId}`)
+            .then((res) => res.data)
+        );
+      },
+    },
   },
 });
 
