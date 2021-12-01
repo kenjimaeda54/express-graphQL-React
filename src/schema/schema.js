@@ -84,13 +84,33 @@ const mutation = new GraphQLObjectType({
     addUser: {
       type: UserType,
       args: {
-        firstName: { type: GraphQLNonNull(GraphQLString) },
-        age: { type: GraphQLNonNull(GraphQLInt) },
+        firstName: { type: new GraphQLNonNull(GraphQLString) },
+        age: { type: new GraphQLNonNull(GraphQLInt) },
         companyId: { type: GraphQLString },
       },
-      //id e auto gerado pelo graphql
       resolve(parentValue, { firstName, age }) {
+        //id e auto gerado pelo graphql
         return api.post("/users", { firstName, age }).then((res) => res.data);
+      },
+    },
+    deleteUser: {
+      type: UserType,
+      args: { id: { type: new GraphQLNonNull(GraphQLString) } },
+      resolve(parentValue, { id }) {
+        return api.delete(`/users/${id}`).then((res) => res.data);
+      },
+    },
+    editUser: {
+      type: UserType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLString) },
+        firstName: { type: GraphQLString },
+        age: { type: GraphQLInt },
+        companyId: { type: GraphQLString },
+      },
+      resolve(parentValue, args) {
+        //o args ja e um objeto,por ser bastante valores optou passar direto args
+        return api.patch(`/users/${args.id}`, args).then((res) => res.data);
       },
     },
   },
